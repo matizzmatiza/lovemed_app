@@ -5,7 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import moment from 'moment';
 import {Colors, Fonts, Paths} from '../../../Theme'
 
-const EventList = ({ navigation }) => {
+const JurorsList = ({ navigation }) => {
     const [events, setEvents] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -75,7 +75,7 @@ const EventList = ({ navigation }) => {
             data={events}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => (
-            <TouchableOpacity style={styles.eventContainer} onPress={() => navigation.navigate('EventDetails', {eventId: item.id})}>
+            <TouchableOpacity style={styles.eventContainer} onPress={() => navigation.navigate('AddJuror', {eventId: item.id})}>
                 <View style={styles.column1}>
                     <Text style={styles.eventText}>{item.event_name}</Text>
                     <Text style={styles.eventPlace}>Miejscowość: {item.event_place}</Text>
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default EventList;
+export default JurorsList;

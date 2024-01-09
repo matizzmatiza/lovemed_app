@@ -14,7 +14,7 @@ const OrganizatorEventsScreen = ({ navigation }) => {
         <View style={styles.container}>
             <StatusBar barStyle="dark-content" />
             <Text style={styles.title}>Twoje wydarzenia</Text>
-            <EventList />
+            <EventList navigation={navigation} />
             <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('NewEvent')}>
                 <Image source={iconName} style={{ width: 20, height: 20, tintColor: Colors.white }} />
             </TouchableOpacity>

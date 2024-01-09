@@ -31,31 +31,31 @@ const OrganizatorLoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <ImageBackground source={require('../../assets/img/bg_lovemed.png')} style={styles.backgroundImage}>
         <Text style={styles.title}>Organizator</Text>
-        <TextInput
-          placeholder="Adres e-mail"
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          style={styles.input}
-          placeholderTextColor="rgba(0,0,0,0.5)"
-        />
-        <TextInput
-          placeholder="Hasło"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-          style={styles.input}
-          placeholderTextColor="rgba(0,0,0,0.5)"
-        />
+        <View style={styles.label}>
+          <Text style={styles.labelText}>Adres e-mail</Text>
+          <TextInput
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.label}>
+          <Text style={styles.labelText}>Hasło</Text>
+          <TextInput
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+            style={styles.input}
+          />
+        </View>
         <TouchableOpacity style={styles.button} onPress={() => handleLogin()}>
-              <Text style={styles.text}>Zaloguj się</Text>
+              <Text style={styles.buttonText}>Zaloguj się</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonback} onPress={() => navigation.navigate('Home')}>
-              <Text style={styles.text}>Wróć</Text>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+              <Text style={styles.buttonText}>Wróć</Text>
         </TouchableOpacity>
-      </ImageBackground>
     </View>
   );
 };
@@ -64,56 +64,46 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: Colors.brandColor,
-  },
-  backgroundImage: {
-    resizeMode: 'cover',
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
-    gap: 20
+    gap: 20,
+    padding: 20,
+    backgroundColor: Colors.white,
+  },
+  label: {
+    width: '100%',
+    marginBottom: 5
+  },
+  labelText: {
+      fontFamily: Fonts.brandFont,
+      fontWeight: 'bold',
+      color: Colors.brandColor,
   },
   input: {
-    width: 280,
-    height: 60,
-    fontSize: 20,
-    borderWidth: 0,
-    padding: 10,
-    backgroundColor: Colors.white,
-    borderRadius: 5,
-    fontFamily: Fonts.brandFont,
+      width: '100%',
+      height: 40,
+      borderColor: 'gray',
+      borderWidth: 1,
+      marginTop: 10,
+      padding: 10,
+      fontFamily: Fonts.brandFont,
   },
   button: {
-    backgroundColor: Colors.white,
-    padding: 10,
-    borderRadius: 5,
-    width: 200,
-    height: 60,
-    justifyContent: 'center',
+    backgroundColor: Colors.brandColor,
+    width: '100%',
     alignItems: 'center',
-    marginTop: 40,
-  },
-  buttonback: {
-    backgroundColor: Colors.white,
-    padding: 10,
-    borderRadius: 5,
-    width: 200,
-    height: 60,
     justifyContent: 'center',
-    alignItems: 'center',
+    padding: 10,
+    borderRadius: 25,
   },
-  text: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: Colors.brandColor,
-    fontFamily: Fonts.brandFont,
+  buttonText: {
+      color: Colors.white,
+      fontFamily: Fonts.brandFont,
+      fontWeight: 'bold'
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: Colors.white,
+    color: Colors.brandColor,
     marginBottom: 20,
     textTransform: 'uppercase',
     fontFamily: Fonts.brandFont,

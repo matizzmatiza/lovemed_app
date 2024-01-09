@@ -5,6 +5,9 @@ import BeOrganizatorScreen from './screens/BeOrganiztorScreen';
 import OrganizatorLoginScreen from './screens/Organizator/OrganizatorLoginScreen'; // Zaimportuj LoginScreen
 import OrganizatorPanelScreen from './screens/Organizator/OrganizatorPanelScreen';
 import NewEvent from './screens/Organizator/AddEventForm';
+import EventDetailsScreen from './screens/Organizator/EventDetails';
+import JurorsViewScreen from './screens/Organizator/JurorsView';
+import AddJuror from './screens/Organizator/AddJuror';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +19,9 @@ const AppNavigator = () => {
       <Stack.Screen name="OrganizatorLogin" component={OrganizatorLoginScreen} />
       <Stack.Screen name="OrganizatorPanel" component={OrganizatorPanelScreen} />
       <Stack.Screen name="NewEvent" component={NewEvent} />
+      <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
+      <Stack.Screen name="JurorsView" component={JurorsViewScreen} />
+      <Stack.Screen name="AddJuror" component={AddJuror} />
     </Stack.Navigator>
   );
 };
