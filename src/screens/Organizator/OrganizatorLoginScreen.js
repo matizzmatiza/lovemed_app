@@ -15,7 +15,7 @@ const OrganizatorLoginScreen = ({ navigation }) => {
         //
         // UWAGA - tymczasowe dane logowania poniej trzeba zmienic na "email" i "password"
         //
-        email: "mateusz@bytebuilders.pl",
+        email: "tuczynskimati@gmail.com",
         password: "Pomidor1",
       });
 
