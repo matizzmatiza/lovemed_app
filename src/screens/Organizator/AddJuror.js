@@ -2,56 +2,62 @@ import React, { useState } from 'react';
 import { Text, TextInput, View, StyleSheet, ActivityIndicator, Button, Alert, TouchableOpacity} from 'react-native';
 import {Colors, Fonts, Paths} from '../../../Theme'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import axios from 'axios';
 
 const AddJuror = ({ navigation, route }) => {
-    const { eventId } = route.params;
+    const [jurorName, setJurorName] = useState('');
+    const [jurorSurname, setJurorSurname] = useState('');
+    const [jurorPhone, setJurorPhone] = useState('');
+    const [jurorEmail, setJurorEmail] = useState('');
+
+    const handleSubmit = async () => {
+        if (!jurorName || !jurorSurname || !jurorEmail) {
+            Alert.alert('Błąd', 'Pola imię, naziwsko i e-mail są wymagane.');
+            return;
+        }
+    
+        try {
+            const response = await axios.post(`${Paths.serverApi}/api/users`, {
+                name: jurorName,
+                surname: jurorSurname,
+                email: jurorEmail,
+                phone: jurorPhone,
+                event_id: route.params.eventId,
+            });
+            navigation.navigate('JurorsView', {eventId: route.params.eventId});
+        } catch (error) {
+            console.error('Error:', error.response.data);
+            Alert.alert('Błąd', 'Nie udało się dodać jurora.');
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>Dodawanie jurora</Text>
             <View style={styles.label}>
                 <Text style={styles.labelText}>Imię</Text>
-                <TextInput
-                    // value={user.name}
-                    // onChangeText={(text) => handleInputChange('name', text)}
-                    placeholder="Imię"
-                    style={styles.input}
-                />
+                <TextInput onChangeText={setJurorName} value={jurorName} style={styles.input}/>
             </View>
             
             <View style={styles.label}>
                 <Text style={styles.labelText}>Nazwisko</Text>
-                <TextInput
-                    // value={user.surname}
-                    // onChangeText={(text) => handleInputChange('surname', text)}
-                    placeholder="Nazwisko"
-                    style={styles.input}
-                />
+                <TextInput onChangeText={setJurorSurname} value={jurorSurname} style={styles.input}/>
             </View>
 
             <View style={styles.label}>
                 <Text style={styles.labelText}>Numer telefonu (opcojonalnie)</Text>
-                <TextInput
-                    // value={user.phone_number}
-                    // onChangeText={(text) => handleInputChange('phone_number', text)}
-                    placeholder="Numer telefonu"
-                    style={styles.input}
-                />
+                <TextInput onChangeText={setJurorPhone} value={jurorPhone} style={styles.input}/>
             </View>
 
             <View style={styles.label}>
                 <Text style={styles.labelText}>Adres e-mail</Text>
-                <TextInput
-                    // value={user.email}
-                    // onChangeText={(text) => handleInputChange('email', text)}
-                    placeholder="Adres e-mail"
-                    style={styles.input}
-                /> 
+                <TextInput onChangeText={setJurorEmail} value={jurorEmail} style={styles.input}/>
             </View>
 
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Dodaj jurora</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('JurorsView', {backEventId: eventId})} style={styles.button}>
+            <TouchableOpacity onPress={() => navigation.navigate('JurorsView', {eventId: route.params.eventId})} style={styles.button}>
                 <Text style={styles.buttonText}>Anuluj</Text>
             </TouchableOpacity>
         </SafeAreaView>

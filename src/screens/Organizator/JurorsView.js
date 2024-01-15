@@ -1,24 +1,52 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, Image, View, StyleSheet, ActivityIndicator, Button, Alert, TouchableOpacity} from 'react-native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
 import {Colors, Fonts, Paths} from '../../../Theme'
+import axios from 'axios';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import JurorsList from './JurorsList';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 const JurorsView = ({ navigation, route }) => {
+    const [jurors, setJurors] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     iconName = require('../../assets/img/add-button.png');
-    // const { eventId } = route.params;
+
+    useFocusEffect(
+        React.useCallback(() => {
+            const fetchEvents = async () => {
+                setIsLoading(true);
+                try {
+                    const response = await axios.get(`${Paths.serverApi}/api/jurors/${route.params.eventId}`);
+                    setJurors(response.data);
+                } catch (error) {
+                    console.error(error);
+                } finally {
+                    setIsLoading(false);
+                }
+            };
+
+            fetchEvents();
+            return () => {
+                // opcjonalne czyszczenie
+            };
+        }, [])
+    );
+
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Jurorzy</Text>
+            <Text style={styles.title}>Jurorzy {isLoading ? (
+                <Text>(Ładowanie..)</Text>
+            ) : (
+                <Text>({jurors.length})</Text>
+            )}</Text>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EventDetails')}>
+                <Text style={styles.buttonText}>Wróć</Text>
+            </TouchableOpacity>
             <JurorsList navigation={navigation} route={route} />
-            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddJuror', {route: route})}>
+            <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddJuror', {eventId: route.params.eventId})}>
                 <Image source={iconName} style={{ width: 20, height: 20, tintColor: Colors.white }} />
             </TouchableOpacity>
-            <Button title='wróć' onPress={navigation.navigate('EventDetails')}/>
         </SafeAreaView>
     );
 };

@@ -11,8 +11,11 @@ const OrganizatorLoginScreen = ({ navigation }) => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(`${Paths.serverApi}/api/login`, {
-        email: email,
-        password: password,
+        //
+        // UWAGA - tymczasowe dane logowania poniej trzeba zmienic na "email" i "password"
+        //
+        email: "mateusz@bytebuilders.pl",
+        password: "Pomidor1",
       });
 
       // Przechowywanie tokena

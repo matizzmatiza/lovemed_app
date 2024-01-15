@@ -5,8 +5,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import moment from 'moment';
 import {Colors, Fonts, Paths} from '../../../Theme'
 
-const JurorsList = ({ navigation }) => {
-    const [events, setEvents] = useState([]);
+const JurorsList = ({ navigation, route }) => {
+    const [jurors, setJurors] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
     useFocusEffect(
@@ -14,8 +14,8 @@ const JurorsList = ({ navigation }) => {
             const fetchEvents = async () => {
                 setIsLoading(true);
                 try {
-                    const response = await axios.get(`${Paths.serverApi}/api/events`);
-                    setEvents(response.data);
+                    const response = await axios.get(`${Paths.serverApi}/api/jurors/${route.params.eventId}`);
+                    setJurors(response.data);
                 } catch (error) {
                     console.error(error);
                 } finally {
@@ -70,20 +70,18 @@ const JurorsList = ({ navigation }) => {
 
     return (
         <View style={{ flex: 1, width: '100%' }}>
-        {events.length > 0 ? (
+        {jurors.length > 0 ? (
             <FlatList
-            data={events}
+            data={jurors}
             keyExtractor={item => item.id.toString()}
             renderItem={({ item }) => (
-            <TouchableOpacity style={styles.eventContainer} onPress={() => navigation.navigate('AddJuror', {eventId: item.id})}>
+            <TouchableOpacity style={styles.eventContainer}>
                 <View style={styles.column1}>
-                    <Text style={styles.eventText}>{item.event_name}</Text>
-                    <Text style={styles.eventPlace}>Miejscowość: {item.event_place}</Text>
-                    <Text style={styles.eventDate}>Zaczyna się: {item.event_start_date}</Text>
-                    <Text style={styles.eventTime}>Godzina {moment(item.event_start_time, "HH:mm:ss").format("HH:mm")}</Text>
+                    <Text style={styles.eventText}>{item.name} {item.surname}</Text>
+                    <Text style={styles.eventPlace}>{item.email}</Text>
                 </View>
                 <View style={styles.column2}>
-                    <TouchableOpacity style={styles.deleteButton} onPress={() => confirmDelete(item)}>
+                    <TouchableOpacity style={styles.deleteButton}>
                         <Image source={require('../../assets/img/remove-button.png')} style={{ width: 25, height: 25, tintColor: Colors.brandColor }} />
                     </TouchableOpacity>
                 </View>
@@ -92,7 +90,7 @@ const JurorsList = ({ navigation }) => {
             ItemSeparatorComponent={ItemSeparator} // Dodaje separator między elementami
             />
             ) : (
-            <Text style={styles.noEventsText}>Brak wydarzeń. Dodaj je!</Text>
+                <Text style={styles.noEventsText}>Brak jurorów. Dodaj pierwszego!</Text>
         )}
         </View>
     );

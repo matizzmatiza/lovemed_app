@@ -9,10 +9,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const EventDetails = ({ navigation, route, backEventId }) => {
     const [event, setEvent] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const { eventId } = route.params;
+    const [tempEventId, setTempEventId] = useState(null);
 
     useFocusEffect(
         React.useCallback(() => {
+            const { eventId } = route.params;
+            setTempEventId(eventId)
             const fetchEvents = async () => {
                 setIsLoading(true);
                 try {
@@ -44,7 +46,7 @@ const EventDetails = ({ navigation, route, backEventId }) => {
             { 
               text: "Zakończ", 
               onPress: () => {
-                deleteEvent(eventId);
+                deleteEvent(tempEventId);
                 navigation.navigate('OrganizatorPanel');
               }
             }
@@ -54,7 +56,7 @@ const EventDetails = ({ navigation, route, backEventId }) => {
 
     const deleteEvent = async () => {
         try {
-            await axios.delete(`${Paths.serverApi}/api/events/${eventId}`);
+            await axios.delete(`${Paths.serverApi}/api/events/${tempEventId}`);
         } catch (error) {
             console.error(error);
             Alert.alert('Błąd', 'Nie udało się usunąć wydarzenia');
@@ -73,13 +75,13 @@ const EventDetails = ({ navigation, route, backEventId }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.wrapper}>
                 <Text style={styles.title}>Szczegóły wydarzenia</Text>
-                <Text>Nazwa: {event.event_name}</Text>
-                <Text>Miejsce: {event.event_place}</Text>
-                <Text>Data rozpoczęcia: {event.event_start_date}</Text>
-                <Text>Godzina rozpoczęcia: {moment(event.event_start_time, "HH:mm:ss").format("HH:mm")}</Text>
-                <Text>Opis: {event.event_desc}</Text>
+                <Text style={styles.desc_wrapper}><Text style={styles.desc_title}>Nazwa:</Text> {event.event_name}</Text>
+                <Text style={styles.desc_wrapper}><Text style={styles.desc_title}>Miejsce:</Text> {event.event_place}</Text>
+                <Text style={styles.desc_wrapper}><Text style={styles.desc_title}>Data startu:</Text> {event.event_start_date}</Text>
+                <Text style={styles.desc_wrapper}><Text style={styles.desc_title}>Godzina startu:</Text> {moment(event.event_start_time, "HH:mm:ss").format("HH:mm")}</Text>
+                <Text style={styles.desc_wrapper}><Text style={styles.desc_title}>Opis:</Text> {event.event_desc}</Text>
             </View>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JurorsView', {route: route})}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JurorsView', {eventId: tempEventId})}>
                 <Text style={styles.buttonText}>Jurorzy</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}>
@@ -135,6 +137,15 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.brandFont,
         fontWeight: 'bold'
     },
+    desc_wrapper: {
+        fontSize: 16,
+        marginBottom: 10,
+    },
+    desc_title: {
+        fontFamily: Fonts.brandFont,
+        color: Colors.brandColor,
+        fontWeight: 'bold'
+    }
 })
 
 export default EventDetails;
