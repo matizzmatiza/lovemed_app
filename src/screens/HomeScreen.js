@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }) => {
             </View>
             <Text style={styles.text}>Organizator</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => console.log('Button Pressed')}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JurorLogin')}>
             <View style={styles.iconWrapper}>
               <Image source={JurorIcon} style={styles.icon} />
             </View>

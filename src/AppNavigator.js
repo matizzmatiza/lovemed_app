@@ -8,6 +8,8 @@ import NewEvent from './screens/Organizator/AddEventForm';
 import EventDetailsScreen from './screens/Organizator/EventDetails';
 import JurorsViewScreen from './screens/Organizator/JurorsView';
 import AddJuror from './screens/Organizator/AddJuror';
+import JurorLoginScreen from './screens/Juror/JurorLoginScreen';
+import JurorPanelScreen from './screens/Juror/JurorPanelScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,8 @@ const AppNavigator = () => {
       <Stack.Screen name="EventDetails" component={EventDetailsScreen} />
       <Stack.Screen name="JurorsView" component={JurorsViewScreen} />
       <Stack.Screen name="AddJuror" component={AddJuror} />
+      <Stack.Screen name="JurorLogin" component={JurorLoginScreen} />
+      <Stack.Screen name="JurorPanel" component={JurorPanelScreen} />
     </Stack.Navigator>
   );
 };
