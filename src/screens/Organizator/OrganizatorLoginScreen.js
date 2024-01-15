@@ -3,6 +3,7 @@ import { View, TextInput, Text, Alert, StyleSheet, TouchableOpacity, ImageBackgr
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Colors, Fonts, Paths} from '../../../Theme'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const OrganizatorLoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -33,7 +34,7 @@ const OrganizatorLoginScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
         <Text style={styles.title}>Organizator</Text>
         <View style={styles.label}>
           <Text style={styles.labelText}>Adres e-mail</Text>
@@ -59,14 +60,14 @@ const OrganizatorLoginScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
               <Text style={styles.buttonText}>Wróć</Text>
         </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     gap: 20,
     padding: 20,
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 10,
+    padding: 20,
     borderRadius: 25,
   },
   buttonText: {

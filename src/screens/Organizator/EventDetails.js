@@ -81,18 +81,24 @@ const EventDetails = ({ navigation, route, backEventId }) => {
                 <Text style={styles.desc_wrapper}><Text style={styles.desc_title}>Godzina startu:</Text> {moment(event.event_start_time, "HH:mm:ss").format("HH:mm")}</Text>
                 <Text style={styles.desc_wrapper}><Text style={styles.desc_title}>Opis:</Text> {event.event_desc}</Text>
             </View>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JurorsView', {eventId: tempEventId})}>
-                <Text style={styles.buttonText}>Jurorzy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Uczestnicy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Kategorie</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={() => confirmDelete()}>
-                <Text style={styles.buttonText}>Zakończ wydarzenie</Text>
-            </TouchableOpacity>
+            <View style={styles.mainWrapper}>
+                <View style={styles.wrapperButtons}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JurorsView', {eventId: tempEventId})}>
+                        <Text style={styles.buttonText}>Jurorzy</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Uczestnicy</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.wrapperButtons}>
+                    <TouchableOpacity style={styles.button}>
+                        <Text style={styles.buttonText}>Kategorie</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => confirmDelete()}>
+                        <Text style={styles.buttonText}>Zakończ</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('OrganizatorPanel')}>
                 <Text style={styles.buttonText}>Wróć</Text>
             </TouchableOpacity>
@@ -145,7 +151,16 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.brandFont,
         color: Colors.brandColor,
         fontWeight: 'bold'
-    }
+    },
+    wrapperButtons: {
+        width: '50%',
+        gap: 20,
+    },
+    mainWrapper: {
+        display: 'flex',
+        flexDirection: 'row',
+        gap: 8,
+    },  
 })
 
 export default EventDetails;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FlatList, Text, View, TouchableOpacity, StyleSheet, ActivityIndicator, Image, Alert} from 'react-native';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
@@ -32,27 +32,29 @@ const JurorsList = ({ navigation, route }) => {
 
     const confirmDelete = (item) => {
         Alert.alert(
-          item.event_name,
-          "Czy na pewno chcesz usunąć to wydarzenie?",
+          "Juror",
+          "Czy na pewno chcesz usunąć tego jurora?",
           [
             {
               text: "Anuluj",
               style: "cancel"
             },
             { 
-              text: "Usuń", onPress: () => deleteEvent(item.id) 
+              text: "Usuń", onPress: () => {
+                deleteJuror(item.id);
+              }
             }
           ]
         );
     };
 
-    const deleteEvent = async (id) => {
+    const deleteJuror = async (id) => {
         try {
-            await axios.delete(`${Paths.serverApi}/api/events/${id}`);
-            setEvents(currentEvents => currentEvents.filter(event => event.id !== id));
+            await axios.delete(`${Paths.serverApi}/api/jurors/${id}`);
+            setJurors(currentJuror => currentJuror.filter(juror => juror.id !== id));
         } catch (error) {
             console.error(error);
-            Alert.alert('Błąd', 'Nie udało się usunąć wydarzenia');
+            Alert.alert('Błąd', 'Nie udało się usunąć jurora');
         }
     };    
 
@@ -81,7 +83,7 @@ const JurorsList = ({ navigation, route }) => {
                     <Text style={styles.eventPlace}>{item.email}</Text>
                 </View>
                 <View style={styles.column2}>
-                    <TouchableOpacity style={styles.deleteButton}>
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => confirmDelete(item)}>
                         <Image source={require('../../assets/img/remove-button.png')} style={{ width: 25, height: 25, tintColor: Colors.brandColor }} />
                     </TouchableOpacity>
                 </View>

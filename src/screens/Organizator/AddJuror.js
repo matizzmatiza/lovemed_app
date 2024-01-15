@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Text, TextInput, View, StyleSheet, ActivityIndicator, Button, Alert, TouchableOpacity} from 'react-native';
 import {Colors, Fonts, Paths} from '../../../Theme'
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -17,7 +17,7 @@ const AddJuror = ({ navigation, route }) => {
         }
     
         try {
-            const response = await axios.post(`${Paths.serverApi}/api/users`, {
+            const response = await axios.post(`${Paths.serverApi}/api/jurors`, {
                 name: jurorName,
                 surname: jurorSurname,
                 email: jurorEmail,
@@ -26,7 +26,7 @@ const AddJuror = ({ navigation, route }) => {
             });
             navigation.navigate('JurorsView', {eventId: route.params.eventId});
         } catch (error) {
-            console.error('Error:', error.response.data);
+            console.error('Error:', error);
             Alert.alert('Błąd', 'Nie udało się dodać jurora.');
         }
     };
