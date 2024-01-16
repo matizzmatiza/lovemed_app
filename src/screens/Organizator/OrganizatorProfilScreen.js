@@ -16,10 +16,16 @@ const OrganizatorProfilScreen = ({ userId }) => {
     const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
     const [userEmail, setUserEmail] = useState('');
+    const [userPassword, setUserPassword] = useState('');
+    const [userPasswordNew, setUserPasswordNew] = useState('');
+    const [userPasswordConfirmation, setUserPasswordConfirmation] = useState(false);
     
     useFocusEffect(
         React.useCallback(() => {
             setIsEmailVerified(false);
+            setUserPasswordConfirmation(false);
+            setUserPassword('');
+            setUserPasswordNew('');
             setVerificationCode('');
             const fetchUserData = async () => {
                 setIsLoading(true);
@@ -154,29 +160,38 @@ const OrganizatorProfilScreen = ({ userId }) => {
           console.error("Błąd podczas zmiany adresu e-mail:", error);
           Alert.alert("Błąd", "Nie udało się zmienić adresu e-mail. Sprawdź poprawność adresu e-mail i kodu weryfikacyjnego.");
         }
-      };    
+    };
 
-    // const handleEmailVerification = async () => {
-    //     try {
-    //         const storedUserId = await AsyncStorage.getItem('userId');
-    //         const userId = JSON.parse(storedUserId);
-    //         const response = await axios.post(`${Paths.serverApi}/api/email-verification/${userId}`, {
-    //             email: user.email,
-    //         });
-            
-    //             // Sprawdź, czy status znajduje się w zakresie 2xx (czyli sukces)
-    //         if (response.status >= 200 && response.status < 300) {
-    //             Alert.alert("Sukces", "Wysłano wiadomość z kodem weryfikacyjnym na nowy adres e-mail.");
-    //             setIsEmailVerified(true);
-    //         } else {
-    //             // Obsługa błędów (np. status 400)
-    //             Alert.alert("Błąd", response.data.message || "Nieprawidłowy kod weryfikacyjny.");
-    //         }
-    //     } catch (error) {
-    //         console.error("Błąd podczas zmiany adresu e-mail:", error);
-    //         Alert.alert("Błąd", "Nie udało się zmienić adresu e-mail. Sprawdź poprwaność adresu e-mail i kodu weryfikacyjnego.");
-    //     }
-    // }
+    const handleCheckChangePassword = async () => {
+        try {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            const userId = JSON.parse(storedUserId);
+            const response = await axios.post(`${Paths.serverApi}/api/check-change-password/${userId}`, {
+                newPassword: userPasswordNew,
+            });
+            setUserPasswordConfirmation(true);
+        } catch (error) {
+            console.error("Błąd podczas zmiany hasła:", error.response.data);
+            Alert.alert("Błąd", "Nie udało się zmienić hasła. Prawdopodobnie podałeś stare hasło.");
+        }
+    }
+
+    const handleSetNewPassword = async () => {
+        try {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            const userId = JSON.parse(storedUserId);
+            const response = await axios.post(`${Paths.serverApi}/api/set-new-password/${userId}`, {
+                oldPassword: userPassword,
+            });
+            Alert.alert("Sukces", "Twoje hasło zostało zmienione.");
+            setUserPasswordConfirmation(false);
+            setUserPassword('');
+            setUserPasswordNew('');
+        } catch (error) {
+            console.error("Błąd podczas zmiany hasła:", error.response.data);
+            Alert.alert("Błąd", "Nie udało się zmienić hasła. Prawdopodobnie podałeś nie poprawnie stare hasło.");
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -244,8 +259,40 @@ const OrganizatorProfilScreen = ({ userId }) => {
                 </TouchableOpacity>
                 </>
             )}
-            
-        </View>
+            {!userPasswordConfirmation ? (
+                <>
+                    <View style={styles.label}>
+                        <Text style={styles.labelText}>Nowe hasło</Text>
+                        <TextInput
+                            value={userPasswordNew}
+                            onChangeText={(text) => setUserPasswordNew(text)}
+                            placeholder="Twoje nowe hasło"
+                            secureTextEntry
+                            style={styles.input}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleCheckChangePassword}>
+                        <Text style={styles.buttonText}>Zmień hasło</Text>
+                    </TouchableOpacity>
+                </>
+            ) : (
+                <>
+                    <View style={styles.label}>
+                        <Text style={styles.labelText}>Potwierdź aktualnym hasłem</Text>
+                        <TextInput
+                            value={userPassword}
+                            onChangeText={(text) => setUserPassword(text)}
+                            placeholder="Twoje aktualne hasło"
+                            secureTextEntry
+                            style={styles.input}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleSetNewPassword}>
+                        <Text style={styles.buttonText}>Potwierdź</Text>
+                    </TouchableOpacity>
+                </>
+            )}
+            </View>
     );
 };
 
