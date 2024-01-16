@@ -13,66 +13,20 @@ const JurorProfilScreen = ({ userId }) => {
         phone_number: '',
     });
     const [isLoading, setIsLoading] = useState(true);
-
-    const [newEmail, setNewEmail] = useState('');
+    const [isEmailVerified, setIsEmailVerified] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
-    const [showVerificationInput, setShowVerificationInput] = useState(false);
-
-    const handleChangeEmail = async () => {
-        try {
-            // Wyślij żądanie do backendu
-            const response = await fetch(`${Paths.serverApi}/change-email`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: newEmail }),
-            });
-        
-            const data = await response.json();
-            if (data.success) {
-            setShowVerificationInput(true); // Pokaż pole do wpisania kodu
-            } else {
-            // Obsługa błędów
-            }
-        } catch (error) {
-            // Obsługa wyjątków
-        }
-    };      
-
-    const handleVerification = async () => {
-        try {
-          // Wysyłanie żądania do backendu z kodem weryfikacyjnym
-          const response = await fetch(`${Paths.serverApi}/verify-code`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ code: verificationCode }),
-          });
-      
-          const data = await response.json();
-          
-          // Sprawdzanie, czy weryfikacja się powiodła
-          if (data.success) {
-            // Jeśli kod jest poprawny
-            setShowVerificationInput(false); // Ukryj pole do wpisania kodu
-            setNewEmail(''); // Opcjonalnie, wyczyść pole nowego e-maila
-            setVerificationCode(''); // Wyczyść kod weryfikacyjny
-            // Możesz również wyświetlić powiadomienie o sukcesie
-            alert("Adres e-mail został pomyślnie zmieniony.");
-          } else {
-            // Jeśli kod jest niepoprawny
-            alert("Niepoprawny kod weryfikacyjny. Spróbuj ponownie.");
-          }
-        } catch (error) {
-          // Obsługa wyjątków, np. problemów z połączeniem sieciowym
-          alert("Wystąpił błąd podczas weryfikacji. Spróbuj ponownie później.");
-        }
-      };        
+    const [userEmail, setUserEmail] = useState('');
+    const [userPassword, setUserPassword] = useState('');
+    const [userPasswordNew, setUserPasswordNew] = useState('');
+    const [userPasswordConfirmation, setUserPasswordConfirmation] = useState(false);
     
     useFocusEffect(
         React.useCallback(() => {
+            setIsEmailVerified(false);
+            setUserPasswordConfirmation(false);
+            setUserPassword('');
+            setUserPasswordNew('');
+            setVerificationCode('');
             const fetchUserData = async () => {
                 setIsLoading(true);
                 try {
@@ -93,10 +47,14 @@ const JurorProfilScreen = ({ userId }) => {
 
     const handleInputChange = (name, value) => {
         setUser((prevState) => ({
-            ...prevState,
-            [name]: value,
+          ...prevState,
+          [name]: value,
         }));
-    };
+      
+        if (name === 'email') {
+          setUserEmail(value);
+        }
+      };
 
     if (isLoading) {
         return (
@@ -106,11 +64,38 @@ const JurorProfilScreen = ({ userId }) => {
         );
     }
 
+    const isValidEmail = (email) => {
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/;
+        return emailRegex.test(email);
+    };
+
+    const isValidPhoneNumber = (phoneNumber) => {
+        const phoneNumberRegex = /^[0-9]+$/;
+        return phoneNumberRegex.test(phoneNumber);
+    };
+
     // Funkcja do obsługi zapisu
     const handleSubmit = async () => {
-        // Walidacja pól formularza
-        if (!user.name || !user.surname || !user.phone_number) {
-            Alert.alert("Błąd", "Wszystkie pola są wymagane.");
+        if (!user.name || !user.surname || !isValidPhoneNumber(user.phone_number) || !isValidEmail(user.email)) {
+            let errorMessage = "Wszystkie pola są wymagane.";
+            
+            if (!user.name) {
+                errorMessage += "\n- Imię";
+            }
+        
+            if (!user.surname) {
+                errorMessage += "\n- Nazwisko";
+            }
+        
+            if (!isValidPhoneNumber(user.phone_number)) {
+                errorMessage += "\n- Numer telefonu powinien składać się tylko z cyfr.";
+            }
+        
+            if (!isValidEmail(user.email)) {
+                errorMessage += "\n- Adres email powinien być poprawny.";
+            }
+        
+            Alert.alert("Błąd", errorMessage);
             return;
         }
 
@@ -125,6 +110,88 @@ const JurorProfilScreen = ({ userId }) => {
             Alert.alert("Błąd", "Nie udało się zaktualizować danych.");
         }
     };
+
+    const handleChangeEmail = async () => {
+        try {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            const userId = JSON.parse(storedUserId);
+            const response = await axios.post(`${Paths.serverApi}/api/change-email/${userId}`, {
+                verificationCode: verificationCode
+            });
+            Alert.alert("Sukces", "Twój adres email został zmieniony.");
+            setVerificationCode('');
+            setIsEmailVerified(false);
+        } catch (error) {
+            console.error("Błąd podczas zmiany adresu e-mail:", error.response.data);
+            Alert.alert("Błąd", "Nie udało się zmienić adresu e-mail.");
+        }
+    };
+
+    const handleEmailVerification = async () => {
+        try {
+          const storedUserId = await AsyncStorage.getItem('userId');
+          const userId = JSON.parse(storedUserId);
+    
+          // Sprawdzanie, czy wprowadzony email różni się od aktualnego
+          if (userEmail === user.email) {
+            Alert.alert("Błąd", "Nowy adres e-mail nie może być taki sam jak obecny.");
+            return;
+          }
+
+          // Sprawdzenie, czy wprowadzono nowy adres e-mail
+        if (!userEmail) {
+            Alert.alert("Błąd", "Wprowadź nowy adres e-mail przed zmianą.");
+            return;
+        }
+    
+          const response = await axios.post(`${Paths.serverApi}/api/email-verification/${userId}`, {
+            email: user.email,
+          });
+    
+          // Sprawdź, czy status znajduje się w zakresie 2xx (czyli sukces)
+          if (response.status >= 200 && response.status < 300) {
+            Alert.alert("Sukces", "Wysłano wiadomość z kodem weryfikacyjnym na nowy adres e-mail.");
+            setIsEmailVerified(true);
+          } else {
+            // Obsługa błędów (np. status 400)
+            Alert.alert("Błąd", response.data.message || "Nieprawidłowy kod weryfikacyjny.");
+          }
+        } catch (error) {
+          console.error("Błąd podczas zmiany adresu e-mail:", error);
+          Alert.alert("Błąd", "Nie udało się zmienić adresu e-mail. Sprawdź poprawność adresu e-mail i kodu weryfikacyjnego.");
+        }
+    };
+
+    const handleCheckChangePassword = async () => {
+        try {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            const userId = JSON.parse(storedUserId);
+            const response = await axios.post(`${Paths.serverApi}/api/check-change-password/${userId}`, {
+                newPassword: userPasswordNew,
+            });
+            setUserPasswordConfirmation(true);
+        } catch (error) {
+            console.error("Błąd podczas zmiany hasła:", error.response.data);
+            Alert.alert("Błąd", "Nie udało się zmienić hasła. Prawdopodobnie podałeś stare hasło.");
+        }
+    }
+
+    const handleSetNewPassword = async () => {
+        try {
+            const storedUserId = await AsyncStorage.getItem('userId');
+            const userId = JSON.parse(storedUserId);
+            const response = await axios.post(`${Paths.serverApi}/api/set-new-password/${userId}`, {
+                oldPassword: userPassword,
+            });
+            Alert.alert("Sukces", "Twoje hasło zostało zmienione.");
+            setUserPasswordConfirmation(false);
+            setUserPassword('');
+            setUserPasswordNew('');
+        } catch (error) {
+            console.error("Błąd podczas zmiany hasła:", error.response.data);
+            Alert.alert("Błąd", "Nie udało się zmienić hasła. Prawdopodobnie podałeś nie poprawnie stare hasło.");
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -170,20 +237,62 @@ const JurorProfilScreen = ({ userId }) => {
                     onChangeText={(text) => handleInputChange('email', text)}
                     placeholder="Adres e-mail"
                     style={styles.input}
-                /> 
+                />
             </View>
-            <Button title='Zmień adres e-mail' onPress={handleChangeEmail}/>
-            {showVerificationInput && (
-            <View>
-            <TextInput
-                placeholder="Wpisz kod weryfikacyjny"
-                onChangeText={(text) => setVerificationCode(text)}
-                style={styles.input}
-            />
-            <Button title="Potwierdź" onPress={handleVerification}/>
+            {!isEmailVerified ? (
+                <TouchableOpacity onPress={handleEmailVerification} style={styles.button}>
+                    <Text style={styles.buttonText}>Zmień adres email</Text>
+                </TouchableOpacity>
+            ) : (
+                <>
+                <View style={styles.label}>
+                    <Text style={styles.labelText}>Potwierdź kodem</Text>
+                    <TextInput
+                        value={verificationCode}
+                        onChangeText={(text) => setVerificationCode(text)}
+                        placeholder="Kod weryfikujący"
+                        style={styles.input}
+                    /> 
+                </View>
+                <TouchableOpacity onPress={handleChangeEmail} style={styles.button}>
+                    <Text style={styles.buttonText}>Potwierdź</Text>
+                </TouchableOpacity>
+                </>
+            )}
+            {!userPasswordConfirmation ? (
+                <>
+                    <View style={styles.label}>
+                        <Text style={styles.labelText}>Nowe hasło</Text>
+                        <TextInput
+                            value={userPasswordNew}
+                            onChangeText={(text) => setUserPasswordNew(text)}
+                            placeholder="Twoje nowe hasło"
+                            secureTextEntry
+                            style={styles.input}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleCheckChangePassword}>
+                        <Text style={styles.buttonText}>Zmień hasło</Text>
+                    </TouchableOpacity>
+                </>
+            ) : (
+                <>
+                    <View style={styles.label}>
+                        <Text style={styles.labelText}>Potwierdź aktualnym hasłem</Text>
+                        <TextInput
+                            value={userPassword}
+                            onChangeText={(text) => setUserPassword(text)}
+                            placeholder="Twoje aktualne hasło"
+                            secureTextEntry
+                            style={styles.input}
+                        />
+                    </View>
+                    <TouchableOpacity style={styles.button} onPress={handleSetNewPassword}>
+                        <Text style={styles.buttonText}>Potwierdź</Text>
+                    </TouchableOpacity>
+                </>
+            )}
             </View>
-        )}
-        </View>
     );
 };
 
