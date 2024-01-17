@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Alert, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, TextInput, Text, Alert, StyleSheet, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Colors, Fonts, Paths} from '../../../Theme'
@@ -8,9 +8,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const JurorLoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const response = await axios.post(`${Paths.serverApi}/api/login`, {
         //
         // UWAGA - tymczasowe dane logowania poniej trzeba zmienic na "email" i "password"
@@ -19,16 +21,29 @@ const JurorLoginScreen = ({ navigation }) => {
         password: password,
       });
 
+      if(response.data.userRank !== 'juror') {
+        Alert.alert('Nie jesteś jurorem!', '');
+        navigation.navigate('Home');
+        return;
+      }
+
       // Przechowywanie tokena
-      const token = response.data;
+      const token = response.data.token;
       await AsyncStorage.setItem('userToken', JSON.stringify(token));
 
       // Przechowywanie User ID
       const userId = response.data.userId; // Upewnij się, że ta ścieżka dostępu jest poprawna
       AsyncStorage.setItem('userId', JSON.stringify(userId));
 
-      navigation.navigate('JurorPanel');
+      if(response.data.firstLogin == 1) {
+        setLoading(false);
+        navigation.navigate('JurorFirstLogin', {userId: userId});
+      } else {
+        setLoading(false);
+        navigation.navigate('JurorPanel');
+      }
     } catch (error) {
+      setLoading(false);
       Alert.alert('Błąd logowania', '');
     }
   };
@@ -60,6 +75,10 @@ const JurorLoginScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
               <Text style={styles.buttonText}>Wróć</Text>
         </TouchableOpacity>
+        {loading && 
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color={Colors.brandColor} />
+            </View>}
     </SafeAreaView>
   );
 };

@@ -1,7 +1,8 @@
 export const Colors = {
     brandColor: '#6b244f',
     white: '#ffffff',
-    black: '#000000'
+    black: '#000000',
+    gray: '#dddddd',
 };
 
 export const Fonts = {

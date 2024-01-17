@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, Alert, StyleSheet, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, TextInput, Text, Alert, StyleSheet, TouchableOpacity, ImageBackground, ActivityIndicator } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Colors, Fonts, Paths} from '../../../Theme'
@@ -8,19 +8,22 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 const OrganizatorLoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     try {
+      setLoading(true);
       const response = await axios.post(`${Paths.serverApi}/api/login`, {
         //
         // UWAGA - tymczasowe dane logowania poniej trzeba zmienic na "email" i "password"
         //
-        email: email,
-        password: password,
+        email: 'tuczynskimati@gmail.com',
+        password: '3CnZ4087',
       });
 
       if(response.data.userRank !== 'organizer') {
         Alert.alert('Nie jesteś organizatorem!', '');
+        navigation.navigate('Home');
         return;
       }
 
@@ -33,11 +36,14 @@ const OrganizatorLoginScreen = ({ navigation }) => {
       AsyncStorage.setItem('userId', JSON.stringify(userId));
 
       if(response.data.firstLogin == 1) {
+        setLoading(false);
         navigation.navigate('OrganizerFirstLogin', {userId: userId});
       } else {
+        setLoading(false);
         navigation.navigate('OrganizatorPanel');
       }
     } catch (error) {
+      setLoading(false);
       Alert.alert('Błąd logowania', '');
     }
   };
@@ -69,6 +75,10 @@ const OrganizatorLoginScreen = ({ navigation }) => {
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
               <Text style={styles.buttonText}>Wróć</Text>
         </TouchableOpacity>
+        {loading && 
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color={Colors.brandColor} />
+            </View>}
     </SafeAreaView>
   );
 };

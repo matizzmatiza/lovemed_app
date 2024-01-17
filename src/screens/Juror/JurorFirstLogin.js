@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
 import { Paths, Colors, Fonts } from '../../../Theme';
 
-const OrganizerFirstLogin = ({ navigation, route }) => {
+const JurorFirstLogin = ({ navigation, route }) => {
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -23,7 +23,7 @@ const OrganizerFirstLogin = ({ navigation, route }) => {
                   });
             
                   Alert.alert('Sukces', 'Hasło zostało zapisane pomyślnie.');
-                  navigation.navigate('OrganizatorPanel');
+                  navigation.navigate('JurorPanel');
             }
         } catch (error) {
           console.error('Błąd podczas zapisywania hasła:', error);
@@ -118,4 +118,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default OrganizerFirstLogin;
+export default JurorFirstLogin;
