@@ -89,7 +89,7 @@ const JurorsList = ({ navigation, route }) => {
                 </View>
             </TouchableOpacity>
             )}
-            ItemSeparatorComponent={ItemSeparator} // Dodaje separator między elementami
+            ItemSeparatorComponent={ItemSeparator}
             />
             ) : (
                 <Text style={styles.noEventsText}>Brak jurorów. Dodaj pierwszego!</Text>

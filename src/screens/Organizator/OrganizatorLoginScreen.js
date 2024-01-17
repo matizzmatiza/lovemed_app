@@ -15,19 +15,28 @@ const OrganizatorLoginScreen = ({ navigation }) => {
         //
         // UWAGA - tymczasowe dane logowania poniej trzeba zmienic na "email" i "password"
         //
-        email: "mateusz@bytebuilders.pl",
-        password: "Pomidor2",
+        email: email,
+        password: password,
       });
 
+      if(response.data.userRank !== 'organizer') {
+        Alert.alert('Nie jesteś organizatorem!', '');
+        return;
+      }
+
       // Przechowywanie tokena
-      const token = response.data;
+      const token = response.data.token;
       await AsyncStorage.setItem('userToken', JSON.stringify(token));
 
       // Przechowywanie User ID
       const userId = response.data.userId; // Upewnij się, że ta ścieżka dostępu jest poprawna
       AsyncStorage.setItem('userId', JSON.stringify(userId));
 
-      navigation.navigate('OrganizatorPanel');
+      if(response.data.firstLogin == 1) {
+        navigation.navigate('OrganizerFirstLogin', {userId: userId});
+      } else {
+        navigation.navigate('OrganizatorPanel');
+      }
     } catch (error) {
       Alert.alert('Błąd logowania', '');
     }

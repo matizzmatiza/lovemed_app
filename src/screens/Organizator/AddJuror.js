@@ -51,7 +51,7 @@ const AddJuror = ({ navigation, route }) => {
 
             <View style={styles.label}>
                 <Text style={styles.labelText}>Adres e-mail</Text>
-                <TextInput onChangeText={setJurorEmail} value={jurorEmail} style={styles.input}/>
+                <TextInput onChangeText={setJurorEmail} value={jurorEmail} autoCapitalize="none" style={styles.input}/>
             </View>
 
             <TouchableOpacity style={styles.button} onPress={handleSubmit}>
