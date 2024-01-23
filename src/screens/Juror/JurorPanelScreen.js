@@ -22,7 +22,7 @@ const JurorPanelScreen = () => {
           iconName = focused ? require('../../assets/img/profile-icon.png') : require('../../assets/img/profile-icon.png');
         } else if (route.name === 'Ustawienia') {
           iconName = focused ? require('../../assets/img/settings-icon.png') : require('../../assets/img/settings-icon.png');
-        } else if (route.name === 'Wydarzenie') {
+        } else if (route.name === 'Twoje wydarzenie') {
           iconName = focused ? require('../../assets/img/calendar-icon.png') : require('../../assets/img/calendar-icon.png');
         }
         return <Image source={iconName} style={{ width: size, height: size, tintColor: color }} />;
@@ -41,7 +41,7 @@ const JurorPanelScreen = () => {
     })}
 
     >
-      <Tab.Screen name="Wydarzenie" component={JurorEventScreen} />
+      <Tab.Screen name="Twoje wydarzenie" component={JurorEventScreen} />
       <Tab.Screen name="Profil" component={JurorProfilScreen} />
       <Tab.Screen name="Ustawienia" component={JurorSettingsScreen} />
     </Tab.Navigator>

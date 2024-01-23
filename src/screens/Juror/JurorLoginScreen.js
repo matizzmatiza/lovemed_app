@@ -17,8 +17,8 @@ const JurorLoginScreen = ({ navigation }) => {
         //
         // UWAGA - tymczasowe dane logowania poniej trzeba zmienic na "email" i "password"
         //
-        email: email,
-        password: password,
+        email: 'klienci@bytebuilders.pl',
+        password: 'Pomidor1!',
       });
 
       if(response.data.userRank !== 'juror') {

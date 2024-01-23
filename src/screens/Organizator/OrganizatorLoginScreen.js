@@ -17,8 +17,8 @@ const OrganizatorLoginScreen = ({ navigation }) => {
         //
         // UWAGA - tymczasowe dane logowania poniej trzeba zmienic na "email" i "password"
         //
-        email: 'tuczynskimati@gmail.com',
-        password: '3CnZ4087',
+        email: 'spam@bytebuilders.pl',
+        password: 'Pomidor1!',
       });
 
       if(response.data.userRank !== 'organizer') {

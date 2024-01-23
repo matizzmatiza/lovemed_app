@@ -163,6 +163,18 @@ const OrganizatorProfilScreen = ({ userId }) => {
     };
 
     const handleCheckChangePassword = async () => {
+        if(!userPasswordNew) {
+            Alert.alert("Błąd", "Wprowadź nowe hasło przed zmianą.");
+            return;
+        }
+
+        // sprawdź czy hasło ma co najmniej 8 znaków, zawiera małe i duże litery oraz cyfry i znaki specjalne
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,}$/;
+        if(!passwordRegex.test(userPasswordNew)) {
+            Alert.alert("Błąd", "Hasło powinno zawierać co najmniej 8 znaków, w tym małe i duże litery, cyfry oraz znaki specjalne.");
+            return;
+        }
+
         try {
             const storedUserId = await AsyncStorage.getItem('userId');
             const userId = JSON.parse(storedUserId);

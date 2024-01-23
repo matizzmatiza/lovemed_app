@@ -90,7 +90,7 @@ const JurorEventScreen = ({ navigation }) => {
             scrollEnabled={false}
         />
         <View style={styles.wrapper}>
-            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JurorCategorySelection')}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('JurorCategorySelection', {userId: userId, eventId: event.id})}>
                 <Text style={styles.buttonText}>Rozpocznij ocenianie</Text>
             </TouchableOpacity>
         </View>

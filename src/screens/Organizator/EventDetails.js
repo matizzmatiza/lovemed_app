@@ -91,7 +91,7 @@ const EventDetails = ({ navigation, route, backEventId }) => {
                     </TouchableOpacity>
                 </View>
                 <View style={styles.wrapperButtons}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('CategoriesView', {eventId: tempEventId})}>
                         <Text style={styles.buttonText}>Kategorie</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.button} onPress={() => confirmDelete()}>

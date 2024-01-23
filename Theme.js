@@ -6,7 +6,7 @@ export const Colors = {
 };
 
 export const Fonts = {
-    brandFont: 'Montserrat-Regular'
+    brandFont: 'Inter-Regular',
 };
 
 export const Paths = {

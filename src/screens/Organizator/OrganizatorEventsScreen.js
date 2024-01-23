@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontFamily: Fonts.brandFont,
         paddingBottom: 20,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
     },
     addButton: {
         position: 'absolute', // Ustawienie absolutne

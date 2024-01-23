@@ -14,6 +14,8 @@ import OrganizerFirstLoginScreen from './screens/Organizator/OrganizerFirstLogin
 import JurorFirstLoginScreen from './screens/Juror/JurorFirstLogin';
 import JurorEventScreen from './screens/Juror/JurorEventScreen';
 import JurorCategorySelection from './screens/Juror/JurorCategorySelection';
+import CategoriesView from './screens/Organizator/CategoriesView';
+import AddCategory from './screens/Organizator/AddCategory';
 
 const Stack = createNativeStackNavigator();
 
@@ -34,6 +36,8 @@ const AppNavigator = () => {
       <Stack.Screen name="JurorFirstLogin" component={JurorFirstLoginScreen} />
       <Stack.Screen name="JurorEvent" component={JurorEventScreen} />
       <Stack.Screen name="JurorCategorySelection" component={JurorCategorySelection} />
+      <Stack.Screen name="CategoriesView" component={CategoriesView} />
+      <Stack.Screen name="AddCategory" component={AddCategory} />
     </Stack.Navigator>
   );
 };
